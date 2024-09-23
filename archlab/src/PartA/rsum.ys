@@ -1,0 +1,65 @@
+/* rsum_list func */
+/* 黄泽文 2022013014 */
+
+	.pos 0 
+init:
+	irmovl Stack, %esp
+	irmovl Stack, %ebp 
+	call Main
+	halt
+
+
+    .align 4
+ele1:
+    .long 0x00a
+    .long ele2
+ele2:
+    .long 0x0b0
+    .long ele3
+ele3:
+    .long 0xc00
+    .long 0
+
+
+Main:
+	pushl %ebp 
+	rrmovl %esp,%ebp
+    irmovl ele1, %edx
+    pushl %edx
+	call rsum_list
+	rrmovl %ebp,%esp
+	popl %ebp
+	ret 
+
+
+rsum_list:
+    pushl %ebp
+    rrmovl %esp, %ebp
+    mrmovl 8(%ebp), %ecx # ecx: num ptr
+
+    andl %ecx, %ecx
+    je final
+
+    mrmovl (%ecx), %edx # edx: num now
+    pushl %edx # save now value
+
+    mrmovl 4(%ecx), %edx
+    pushl %edx # set the next ptr
+    call rsum_list
+    popl %edx
+    popl %edx
+    addl %edx, %eax
+    jmp end
+    
+    final:
+        irmovl $0, %eax
+        jmp end
+
+    end:
+        rrmovl %ebp, %esp
+        popl %ebp
+        ret
+
+
+	.pos 0x100		
+Stack:	 
